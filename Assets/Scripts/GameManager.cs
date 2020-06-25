@@ -6,6 +6,12 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager gameManager;
     private Rigidbody snowball;
+    [SerializeField]
+    private GameObject LevelEndBlock;
+
+    private bool startedLevelEnd;
+    private bool jumpedLevelEnd;
+    private bool collidedLevelEnd;
 
     private void Awake()
     {
@@ -33,5 +39,40 @@ public class GameManager : MonoBehaviour
     public Rigidbody GetSnowball()
     {
         return snowball;
+    }
+
+    public Vector3 GetLevelEndPosition()
+    {
+        return LevelEndBlock.transform.position;
+    }
+
+    public void StartLevelEnd()
+    {
+        startedLevelEnd = true;
+    }
+
+    public bool IsStartedLevelEnd()
+    {
+        return startedLevelEnd;
+    }
+
+    public void JumpLevelEnd()
+    {
+        jumpedLevelEnd = true;
+    }
+
+    public bool IsJumpedLevelEnd()
+    {
+        return jumpedLevelEnd;
+    }
+
+    public void CollideLevelEnd()
+    {
+        collidedLevelEnd = true;
+    }
+
+    public bool IsCollidedLevelEnd()
+    {
+        return collidedLevelEnd;
     }
 }

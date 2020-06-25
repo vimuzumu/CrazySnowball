@@ -7,7 +7,7 @@ public class Obstacle : MonoBehaviour
     public const float SECONDS_TO_GET_EATEN = 2f;
     private const float EATEN_SCALE_DIFF_THRESHOLD = 0.75f;
     private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f;
-    private const float SCALE_CHANGE_AMOUNT = 0.3f;
+    public const float SCALE_CHANGE_AMOUNT = 0.3f;
 
     private Outline outline;
     private Rigidbody snowball;

@@ -14,6 +14,10 @@ public class SnowballController : MonoBehaviour
     private RaycastHit hit;
     private int eatingAmount;
 
+    private GameManager gameManager;
+
+    private int levelEndCounter;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +26,26 @@ public class SnowballController : MonoBehaviour
         touchInitialPosition = Vector2.zero;
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.AddForce(Vector3.forward * BASE_MOVE_SPEED + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
+        gameManager = GameManager.GetGameManager();
+        levelEndCounter = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameManager.IsStartedLevelEnd() && ! gameManager.IsJumpedLevelEnd())
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                levelEndCounter++;
+                if (levelEndCounter == 2)
+                {
+                    Debug.Log("Size");
+                    levelEndCounter = 0;
+                    ChangeScale(Obstacle.SCALE_CHANGE_AMOUNT * 10);
+                }
+            }
+        }
         if (ShouldMove())
         {
             horizontalVelocity = GetHorizontalVelocity();
@@ -37,18 +56,48 @@ public class SnowballController : MonoBehaviour
         }
     }
 
+    private bool IsPassedLevelEndLine()
+    {
+        if (gameManager.IsStartedLevelEnd() || rigidbody.position.z > gameManager.GetLevelEndPosition().z)
+        {
+            gameManager.StartLevelEnd();
+            return true;
+        }
+        else
+        {
+        return false;
+        }
+    }
+
     private void FixedUpdate()
     {
-        if (rigidbody.velocity.z < BASE_MOVE_SPEED)
+        if (gameManager.IsJumpedLevelEnd())
         {
-            rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, Mathf.Lerp(rigidbody.velocity.z, BASE_MOVE_SPEED, MOVE_STEP * 0.1f));
+            rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, gameManager.GetLevelEndPosition().x - rigidbody.transform.position.x, MOVE_STEP * 2), rigidbody.velocity.y, rigidbody.velocity.z);
         }
-        if (rigidbody.velocity.z > BASE_MOVE_SPEED - 5f && Physics.Raycast(transform.position, Vector3.down, out hit, transform.localScale.y, 1 << LayerMask.NameToLayer("Ground")))
+        else if (IsPassedLevelEndLine())
         {
-            ChangeScale(Time.fixedDeltaTime / (4f / (eatingAmount + 1)));
-            //rigidbody.mass = transform.localScale.y;
+            Vector3 toPosition = gameManager.GetLevelEndPosition() + 180f * Vector3.forward + 63f * Vector3.down;
+            rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, toPosition.x - rigidbody.transform.position.x, MOVE_STEP * 2), rigidbody.velocity.y, rigidbody.velocity.z);
+            if (transform.position.z + rigidbody.velocity.z > gameManager.GetLevelEndPosition().z + 120f)
+            {
+                Debug.Log("vel: " + rigidbody.velocity);
+                gameManager.JumpLevelEnd();
+            }
         }
+        else
+        {
+            if (rigidbody.velocity.z < BASE_MOVE_SPEED)
+            {
+                rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, Mathf.Lerp(rigidbody.velocity.z, BASE_MOVE_SPEED, MOVE_STEP * 0.1f));
+            }
+            if (rigidbody.velocity.z > BASE_MOVE_SPEED - 5f && Physics.Raycast(transform.position, Vector3.down, out hit, transform.localScale.y, 1 << LayerMask.NameToLayer("Ground")))
+            {
+                ChangeScale(Time.fixedDeltaTime / (4f / (eatingAmount + 1)));
+                //rigidbody.mass = transform.localScale.y;
+            }
         rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, horizontalVelocity, MOVE_STEP), rigidbody.velocity.y, rigidbody.velocity.z);
+        }
     }
 
     private bool ShouldMove()
