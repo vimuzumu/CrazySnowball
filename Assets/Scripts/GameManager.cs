@@ -4,19 +4,26 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager gameManager;
-    private Rigidbody snowball;
-    [SerializeField]
-    private GameObject LevelEndBlock;
+    private const float EXP_PER_SIZE_MODIFIER = 200f;
 
+    private static GameManager gameManager;
+
+    private Rigidbody snowball;
     private bool startedLevelEnd;
     private bool jumpedLevelEnd;
     private bool collidedLevelEnd;
+    private int currentSize;
+    private float currentExp;
+
+    [SerializeField]
+    private GameObject LevelEndBlock;
 
     private void Awake()
     {
         gameManager = this;
         snowball = GameObject.Find("Snowball").GetComponent<Rigidbody>();
+        currentSize = 1;
+        currentExp = 0f;
     }
 
     // Start is called before the first frame update
@@ -48,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void StartLevelEnd()
     {
+        Debug.Log("startedLevelEnd");
         startedLevelEnd = true;
     }
 
@@ -58,6 +66,7 @@ public class GameManager : MonoBehaviour
 
     public void JumpLevelEnd()
     {
+        Debug.Log("jumpedLevelEnd");
         jumpedLevelEnd = true;
     }
 
@@ -74,5 +83,41 @@ public class GameManager : MonoBehaviour
     public bool IsCollidedLevelEnd()
     {
         return collidedLevelEnd;
+    }
+
+    public void GainExp(float expAmount)
+    {
+        currentExp += expAmount;
+        float expRequired = GetExpForNextSize();
+        if (currentExp > expRequired)
+        {
+            currentSize++;
+            currentExp -= expRequired;
+            snowball.transform.localScale += Vector3.one;
+        }
+    }
+
+    public void LoseExp(float expAmount)
+    {
+        currentExp -= expAmount;
+        if (currentExp < 0)
+        {
+            currentExp = 0;
+        }
+    }
+
+    public float GetExpForNextSize()
+    {
+        return currentSize * EXP_PER_SIZE_MODIFIER;
+    }
+
+    public int GetCurrentSize()
+    {
+        return currentSize;
+    }
+
+    public float GetCurrentExp()
+    {
+        return currentExp;
     }
 }

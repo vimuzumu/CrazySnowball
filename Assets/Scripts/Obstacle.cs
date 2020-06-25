@@ -4,22 +4,28 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    public const float SECONDS_TO_GET_EATEN = 2f;
-    private const float EATEN_SCALE_DIFF_THRESHOLD = 0.75f;
+    private const float SECONDS_TO_GET_EATEN = 2f;
     private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f;
-    public const float SCALE_CHANGE_AMOUNT = 0.3f;
+    private const float SCALE_CHANGE_AMOUNT = 0.3f;
+    private const float EXP_LOSS_PER_HIT = 20f;
 
     private Outline outline;
     private Rigidbody snowball;
     private new Collider collider;
+    private GameManager gameManager;
+
+    [SerializeField]
+    private int size;
 
     void Start()
     {
         collider = GetComponent<Collider>();
         collider.isTrigger = false;
-        snowball = GameManager.GetGameManager().GetSnowball();
+        gameManager = GameManager.GetGameManager();
+        snowball = gameManager.GetSnowball();
         outline = GetComponent<Outline>();
         outline.enabled = false;
+        size = size == 0 ? (int)transform.localScale.y : size;
     }
 
     void Update()
@@ -42,7 +48,7 @@ public class Obstacle : MonoBehaviour
 
     private bool ShouldGetEaten()
     {
-        return snowball.transform.localScale.y - transform.localScale.y > EATEN_SCALE_DIFF_THRESHOLD;
+        return gameManager.GetCurrentSize() >= size;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -55,19 +61,7 @@ public class Obstacle : MonoBehaviour
             }
             else
             {
-                other.GetComponent<SnowballController>().ChangeScale(-SCALE_CHANGE_AMOUNT);
-                //if (ShouldShowOutline())
-                //{
-                //    other.GetComponent<SnowballController>().ChangeScale(-SCALE_CHANGE_AMOUNT);
-                //    Destroy(gameObject);
-                //    other.attachedRigidbody.velocity = Vector3.back * 15f;
-                //}
-                //else
-                //{
-                //    Vector3 newVelocity = (other.transform.position - transform.position).normalized * 50f;
-                //    newVelocity.y = other.attachedRigidbody.velocity.y;
-                //    other.attachedRigidbody.velocity = newVelocity;
-                //}
+                gameManager.LoseExp(EXP_LOSS_PER_HIT);
             }
         }
     }
@@ -76,7 +70,7 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         transform.SetParent(snowball, true);
-        StartCoroutine(snowball.GetComponent<SnowballController>().EatObstacle());
+        gameManager.GainExp(size * 10f);
         float t = 0f;
         Vector3 initialScale = transform.localScale;
         Vector3 initialPosition = transform.localPosition;
