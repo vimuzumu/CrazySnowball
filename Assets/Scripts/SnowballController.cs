@@ -15,6 +15,8 @@ public class SnowballController : MonoBehaviour
     private RaycastHit hit;
     private int eatingAmount;
     private GameManager gameManager;
+    private MagnetScript magnet;
+    private CameraController cameraController;
 
     void Start()
     {
@@ -24,15 +26,17 @@ public class SnowballController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.AddForce(Vector3.forward * BASE_MOVE_SPEED + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
         gameManager = GameManager.GetGameManager();
+        magnet = GetComponentInChildren<MagnetScript>();
+        cameraController = Camera.main.GetComponent<CameraController>();
     }
 
     void Update()
     {
         if (gameManager.IsStartedLevelEnd() && !gameManager.IsJumpedLevelEnd())
         {
+            cameraController.PlaySpeedEffect(100);
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("clicked");
                 gameManager.GainExp(gameManager.GetExpForNextSize() / 4);
             }
         }
@@ -69,9 +73,8 @@ public class SnowballController : MonoBehaviour
         {
             Vector3 toPosition = gameManager.GetLevelEndPosition() + 180f * Vector3.forward + 63f * Vector3.down;
             rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, toPosition.x - rigidbody.transform.position.x, MOVE_STEP * 2), rigidbody.velocity.y, rigidbody.velocity.z);
-            if (transform.position.z + rigidbody.velocity.z > gameManager.GetLevelEndPosition().z + 120f)
+            if (transform.position.z > gameManager.GetLevelEndPosition().z + 2f * BASE_MOVE_SPEED)
             {
-                Debug.Log("vel: " + rigidbody.velocity);
                 gameManager.JumpLevelEnd();
             }
         }
@@ -127,5 +130,12 @@ public class SnowballController : MonoBehaviour
         float maxDistance = Screen.width * 0.25f;
         float distance = Mathf.Clamp(position.x - touchInitialPosition.x, -maxDistance, maxDistance);
         return (distance / maxDistance) * MAX_HORIZONTAL_VELOCITY;
+    }
+
+    public void Fever()
+    {
+        rigidbody.AddForce(Vector3.forward * 5f);
+        magnet.Enable();
+        cameraController.PlaySpeedEffect(30);
     }
 }

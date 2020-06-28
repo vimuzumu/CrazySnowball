@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour
 
     public void StartLevelEnd()
     {
-        Debug.Log("startedLevelEnd");
         startedLevelEnd = true;
     }
 
@@ -66,7 +65,6 @@ public class GameManager : MonoBehaviour
 
     public void JumpLevelEnd()
     {
-        Debug.Log("jumpedLevelEnd");
         jumpedLevelEnd = true;
     }
 

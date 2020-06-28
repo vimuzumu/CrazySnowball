@@ -12,6 +12,9 @@ public class CameraController : MonoBehaviour
     private float upOffset;
     private float backOffset;
 
+    [SerializeField]
+    private ParticleSystem speedEffect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,5 +28,11 @@ public class CameraController : MonoBehaviour
         upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.8f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
         backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.8f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
         transform.position = Vector3.Lerp(transform.position, snowball.position + Vector3.up * upOffset + Vector3.back * backOffset, MOVE_STEP);
+    }
+
+    public void PlaySpeedEffect(float emissionRate)
+    {
+        speedEffect.emissionRate = emissionRate;
+        speedEffect.Play();
     }
 }

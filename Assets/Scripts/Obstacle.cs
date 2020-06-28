@@ -5,6 +5,7 @@ using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
     private const float SECONDS_TO_GET_EATEN = 2f;
+    private const float SECONDS_TO_GET_PULLED = 1f;
     private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f;
     private const float SCALE_CHANGE_AMOUNT = 0.3f;
     private const float EXP_LOSS_PER_HIT = 20f;
@@ -14,6 +15,8 @@ public class Obstacle : MonoBehaviour
     private new Collider collider;
     private GameManager gameManager;
 
+    [SerializeField]
+    private bool isLevelEndBlock;
     [SerializeField]
     private int size;
 
@@ -53,11 +56,27 @@ public class Obstacle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Snowball"))
+        if (ShouldGetEaten())
         {
-            if (ShouldGetEaten())
+            if (other.gameObject.layer == LayerMask.NameToLayer("Snowball"))
             {
                 StartCoroutine(GetEaten(other.transform));
+            }
+            else if (other.gameObject.layer == LayerMask.NameToLayer("Magnet"))
+            {
+                StartCoroutine(GetPulled(other.transform));
+            }
+        }
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Snowball") && !ShouldGetEaten())
+        {
+            if (isLevelEndBlock)
+            {
+                Debug.Log("Level Finished");
             }
             else
             {
@@ -82,5 +101,20 @@ public class Obstacle : MonoBehaviour
             yield return null;
         }
         Destroy(gameObject);
+    }
+
+
+    private IEnumerator GetPulled(Transform snowball)
+    {
+        collider.enabled = false;
+        float t = 0f;
+        Vector3 initialPosition = transform.position;
+        while (t < 1f)
+        {
+            transform.position = Vector3.Lerp(initialPosition, snowball.position, t);
+            t += Time.deltaTime / SECONDS_TO_GET_PULLED;
+            yield return null;
+        }
+        StartCoroutine(GetEaten(snowball));
     }
 }
