@@ -15,7 +15,7 @@ public class SnowballController : MonoBehaviour
     private RaycastHit hit;
     private int eatingAmount;
     private GameManager gameManager;
-    private MagnetScript magnet;
+    private Magnet magnet;
     private CameraController cameraController;
 
     void Start()
@@ -26,7 +26,7 @@ public class SnowballController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.AddForce(Vector3.forward * BASE_MOVE_SPEED + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
         gameManager = GameManager.GetGameManager();
-        magnet = GetComponentInChildren<MagnetScript>();
+        magnet = GetComponentInChildren<Magnet>();
         cameraController = Camera.main.GetComponent<CameraController>();
     }
 
