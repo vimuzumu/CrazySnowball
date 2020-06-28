@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     private const float EXP_PER_SIZE_MODIFIER = 200f;
 
+    public static int currentCoinsAmount;
+
     private static GameManager gameManager;
 
     private Rigidbody snowball;
@@ -17,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject LevelEndBlock;
+    [SerializeField]
+    private Canvas canvas;
 
     private void Awake()
     {
@@ -24,6 +28,7 @@ public class GameManager : MonoBehaviour
         snowball = GameObject.Find("Snowball").GetComponent<Rigidbody>();
         currentSize = 1;
         currentExp = 0f;
+        currentCoinsAmount = 0;
     }
 
     // Start is called before the first frame update
@@ -117,5 +122,10 @@ public class GameManager : MonoBehaviour
     public float GetCurrentExp()
     {
         return currentExp;
+    }
+
+    public Canvas GetCanvas()
+    {
+        return canvas;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SizeProgressBar : MonoBehaviour
 {
-    private float maxWidth;
+    private float maxHight;
     private float currentExp;
     private GameManager gameManager;
     private RectTransform fill;
@@ -12,7 +12,7 @@ public class SizeProgressBar : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.GetGameManager();
-        maxWidth = transform.parent.GetComponent<RectTransform>().rect.width;
+        maxHight = transform.parent.GetComponent<RectTransform>().rect.height;
         currentExp = gameManager.GetCurrentExp();
         fill = GetComponent<RectTransform>();
     }
@@ -22,7 +22,7 @@ public class SizeProgressBar : MonoBehaviour
         if (gameManager.GetCurrentExp() != currentExp)
         {
             currentExp = gameManager.GetCurrentExp();
-            fill.sizeDelta = new Vector2(maxWidth * Mathf.Clamp(currentExp / gameManager.GetExpForNextSize(), 0f, 1f), fill.sizeDelta.y);
+            fill.sizeDelta = new Vector2(fill.sizeDelta.x, maxHight * Mathf.Clamp(currentExp / gameManager.GetExpForNextSize(), 0f, 1f));
         }
     }
 }

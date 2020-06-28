@@ -107,7 +107,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1196098f075c2774ba77804fadb2260b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLevelEndBlock: 0
   size: 0
+  coinEffectPrefab: {fileID: 5065685376114528899, guid: b51c759d86dddaf458c4e0e2b4fd97d2,
+    type: 3}
 --- !u!114 &-6600472679115554143
 MonoBehaviour:
   m_ObjectHideFlags: 0

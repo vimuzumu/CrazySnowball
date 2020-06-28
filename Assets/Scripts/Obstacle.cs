@@ -19,6 +19,8 @@ public class Obstacle : MonoBehaviour
     private bool isLevelEndBlock;
     [SerializeField]
     private int size;
+    [SerializeField]
+    private GameObject coinEffectPrefab;
 
     void Start()
     {
@@ -90,6 +92,12 @@ public class Obstacle : MonoBehaviour
         collider.enabled = false;
         transform.SetParent(snowball, true);
         gameManager.GainExp(size * 10f);
+        if (coinEffectPrefab != null)
+        {
+            GameManager.currentCoinsAmount += size;
+            GameObject coinEffect = Instantiate(coinEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
+            StartCoroutine(coinEffect.GetComponent<CoinEffect>().AnimateCoinEffect(size));
+        }
         float t = 0f;
         Vector3 initialScale = transform.localScale;
         Vector3 initialPosition = transform.localPosition;
@@ -100,7 +108,7 @@ public class Obstacle : MonoBehaviour
             t += Time.deltaTime / SECONDS_TO_GET_EATEN;
             yield return null;
         }
-        Destroy(gameObject);
+        Destroy(gameObject);        
     }
 
 
