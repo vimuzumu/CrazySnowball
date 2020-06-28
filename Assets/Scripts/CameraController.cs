@@ -25,8 +25,8 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.8f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
-        backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.8f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
+        upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.5f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
+        backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.5f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
         transform.position = Vector3.Lerp(transform.position, snowball.position + Vector3.up * upOffset + Vector3.back * backOffset, MOVE_STEP);
     }
 

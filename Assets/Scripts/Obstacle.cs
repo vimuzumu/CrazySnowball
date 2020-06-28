@@ -14,6 +14,7 @@ public class Obstacle : MonoBehaviour
     private Rigidbody snowball;
     private new Collider collider;
     private GameManager gameManager;
+    private bool snowman;
 
     [SerializeField]
     private bool isLevelEndBlock;
@@ -31,6 +32,7 @@ public class Obstacle : MonoBehaviour
         outline = GetComponent<Outline>();
         outline.enabled = false;
         size = size == 0 ? (int)transform.localScale.y : size;
+        snowman = gameObject.layer == LayerMask.NameToLayer("Snowman");
     }
 
     void Update()
@@ -53,7 +55,7 @@ public class Obstacle : MonoBehaviour
 
     private bool ShouldGetEaten()
     {
-        return gameManager.GetCurrentSize() >= size;
+        return snowman || gameManager.GetCurrentSize() >= size;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -91,7 +93,6 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         transform.SetParent(snowball, true);
-        gameManager.GainExp(size * 10f);
         if (coinEffectPrefab != null)
         {
             GameManager.currentCoinsAmount += size;
@@ -108,6 +109,7 @@ public class Obstacle : MonoBehaviour
             t += Time.deltaTime / SECONDS_TO_GET_EATEN;
             yield return null;
         }
+        gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * 10f);
         Destroy(gameObject);        
     }
 

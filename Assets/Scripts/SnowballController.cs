@@ -7,7 +7,7 @@ public class SnowballController : MonoBehaviour
     private const float BASE_MOVE_SPEED = 50f;
     private const float MAX_HORIZONTAL_VELOCITY = 20f;
     private const float MOVE_STEP = 0.2f;
-    private const float EXP_GAIN_PER_SECOND = 400f;
+    private const float EXP_GAIN_PER_SECOND = 20f;
 
     private new Rigidbody rigidbody;
     private float horizontalVelocity;
