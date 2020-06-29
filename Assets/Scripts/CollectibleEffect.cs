@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class CoinEffect : MonoBehaviour
+public class CollectibleEffect : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI amount;
+    private bool coinCollectible;
+    [SerializeField]
+    private TextMeshProUGUI amountText;
 
-    public IEnumerator AnimateCoinEffect(int coinsAmount)
+    public IEnumerator AnimateCollectibleEffect(int amount)
     {
+        if (coinCollectible)
+        {
+            GameManager.currentCoinsAmount += amount;
+        }
         float t = 0f;
         RectTransform rectTransform = GetComponent<RectTransform>();
         Vector2 from = rectTransform.anchoredPosition;
         Vector2 to = from + Vector2.up * 50f;
-        amount.text = "+" + coinsAmount + " X ";
+        amountText.text = "+" + amount;
         while (t < 1f)
         {
             rectTransform.anchoredPosition = Vector2.Lerp(from, to, t);
-            t += Time.deltaTime / 0.4f;
+            t += Time.deltaTime / 0.5f;
             yield return null;
         }
         Destroy(gameObject);

@@ -108,9 +108,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1196098f075c2774ba77804fadb2260b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSanta: 0
   isLevelEndBlock: 0
   size: 0
-  coinEffectPrefab: {fileID: 5065685376114528899, guid: b51c759d86dddaf458c4e0e2b4fd97d2,
+  collectibleEffectPrefab: {fileID: 5065685376114528899, guid: 74d3d8c06af79bb409a57ec48f2143c9,
     type: 3}
 --- !u!114 &7747297193831140409
 MonoBehaviour:

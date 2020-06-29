@@ -7,9 +7,7 @@ public class Obstacle : MonoBehaviour
     private const float SECONDS_TO_SANTA_HOP = 5f;
     private const float SECONDS_TO_GET_EATEN = 2f;
     private const float SECONDS_TO_GET_PULLED = 1f;
-    private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f;
-    private const float SCALE_CHANGE_AMOUNT = 0.3f;
-    private const float EXP_LOSS_PER_HIT = 20f;
+    //private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f; might be used to remove highlight for small objects
 
     private Outline outline;
     private Rigidbody snowball;
@@ -25,12 +23,7 @@ public class Obstacle : MonoBehaviour
     [SerializeField]
     private int size;
     [SerializeField]
-    private GameObject coinEffectPrefab;
-
-    private void Awake()
-    {
-
-    }
+    private GameObject collectibleEffectPrefab;
 
     void Start()
     {
@@ -76,7 +69,6 @@ public class Obstacle : MonoBehaviour
             outline.OutlineColor = ShouldGetEaten() ? Color.green : Color.red;
         }
     }
-
     private bool ShouldGetEaten()
     {
         return snowman || gameManager.GetCurrentSize() >= size;
@@ -129,7 +121,7 @@ public class Obstacle : MonoBehaviour
             }
             else
             {
-                gameManager.LoseExp(EXP_LOSS_PER_HIT);
+                gameManager.LoseExp(Settings.expLossPerHit);
             }
         }
     }
@@ -138,12 +130,12 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         transform.SetParent(snowball, true);
-        if (coinEffectPrefab != null)
+        if (collectibleEffectPrefab != null)
         {
             size = isLevelEndBlock ? size * 10 : size;
             GameManager.currentCoinsAmount += size;
-            GameObject coinEffect = Instantiate(coinEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
-            StartCoroutine(coinEffect.GetComponent<CoinEffect>().AnimateCoinEffect(size));
+            GameObject collectibleEffect = Instantiate(collectibleEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
+            StartCoroutine(collectibleEffect.GetComponent<CollectibleEffect>().AnimateCollectibleEffect(size));
         }
         float t = 0f;
         Vector3 initialScale = transform.localScale;
@@ -157,7 +149,7 @@ public class Obstacle : MonoBehaviour
         }
         if (!isLevelEndBlock)
         {
-            gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * 10f, isLevelEndBlock);
+            gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * Settings.eatingExpMultiplier, isLevelEndBlock);
         }
         Destroy(gameObject);        
     }
