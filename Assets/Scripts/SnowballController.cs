@@ -28,9 +28,10 @@ public class SnowballController : MonoBehaviour
     {
         if (gameManager.IsStartedLevelEnd() && !gameManager.IsFinishedLevelEnd())
         {
-            if (Input.GetMouseButtonDown(0))
+            if (DidClick())
             {
                 gameManager.IncTapEffect();
+                gameManager.GainExp(gameManager.GetExpForNextSize() * 0.5f * gameManager.GetCurrentTapEffect() * 0.01f);
             } else
             {
                 gameManager.DecTapEffect();
@@ -85,6 +86,21 @@ public class SnowballController : MonoBehaviour
         {
             rigidbody.velocity = Vector3.zero;
         }
+    }
+
+    private bool DidClick()
+    {
+        bool didClick = false;
+#if UNITY_EDITOR
+        return Input.GetMouseButtonDown(0);
+#else
+            if (Input.touchCount > 0)
+            {
+                Touch touch = Input.GetTouch(0);
+                return touch.phase == TouchPhase.Began;
+            }
+#endif
+        return didClick;
     }
 
     private bool ShouldMove()

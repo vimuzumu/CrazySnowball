@@ -11,6 +11,7 @@ public class Magnet: MonoBehaviour
     {
         collider = GetComponent<SphereCollider>();
         collider.radius = Settings.magnetRadius;
+        collider.isTrigger = true;
         Enable(false);
     }
 
