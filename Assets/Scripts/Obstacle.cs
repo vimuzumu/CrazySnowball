@@ -172,24 +172,26 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         float t = 0f;
+        Quaternion initialRotation = transform.rotation;
         while (t < 1f)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y, t * 5);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y, t);
+            transform.rotation = Quaternion.Lerp(initialRotation, Quaternion.Euler(Vector3.zero), t);
             t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
             yield return null;
         }
-        transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 2f;
+        transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y;
         t = 0;
         while (t < 1f)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f, t * 5);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f, t);
             t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
             yield return null;
         }
         transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
         gameManager.Fever();
         float timeLeft = (SECONDS_TO_SANTA_HOP * 0.8f);
-        while (timeLeft > 0f) 
+        while (timeLeft > 0f)
         {
             transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
             timeLeft -= Time.deltaTime;

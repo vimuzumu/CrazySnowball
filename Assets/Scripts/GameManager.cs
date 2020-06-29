@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
     private float tapEffect;
     private float levelEndBonus;
     private CameraController cameraController;
-    private Magnet magnet;
     private bool gameRunning;
 
     [SerializeField]
@@ -35,6 +34,8 @@ public class GameManager : MonoBehaviour
     private GameObject levelEndBlock;
     [SerializeField]
     private ParticleSystem snowEmitter;
+    [SerializeField]
+    private Magnet magnet;
 
     private void Awake()
     {
@@ -46,7 +47,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         cameraController = Camera.main.GetComponent<CameraController>();
-        magnet = snowball.GetComponentInChildren<Magnet>();
         currentSize = 1;
         currentExp = 0f;
         currentCoinsAmount = PlayerPrefs.GetInt(CURRENT_COINS_KEY);
