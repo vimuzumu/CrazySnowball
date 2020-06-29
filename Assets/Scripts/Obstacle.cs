@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    private const float SECONDS_TO_SANTA_HOP = 5f;
     private const float SECONDS_TO_GET_EATEN = 2f;
     private const float SECONDS_TO_GET_PULLED = 1f;
     //private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f; might be used to remove highlight for small objects
@@ -177,7 +176,7 @@ public class Obstacle : MonoBehaviour
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y, t);
             transform.rotation = Quaternion.Lerp(initialRotation, Quaternion.Euler(Vector3.zero), t);
-            t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
+            t += Time.deltaTime / 0.5f;
             yield return null;
         }
         transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y;
@@ -185,12 +184,12 @@ public class Obstacle : MonoBehaviour
         while (t < 1f)
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f, t);
-            t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
+            t += Time.deltaTime / 0.5f;
             yield return null;
         }
         transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
         gameManager.Fever();
-        float timeLeft = (SECONDS_TO_SANTA_HOP * 0.8f);
+        float timeLeft = Settings.magnetDuration;
         while (timeLeft > 0f)
         {
             transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
