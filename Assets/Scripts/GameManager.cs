@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,32 +12,42 @@ public class GameManager : MonoBehaviour
 
     private Rigidbody snowball;
     private bool startedLevelEnd;
-    private bool jumpedLevelEnd;
-    private bool collidedLevelEnd;
+    private bool finishedLevelEnd;
     private int currentSize;
     private float currentExp;
+    private float levelEndBonus;
+    private CameraController cameraController;
+    private Magnet magnet;
 
     [SerializeField]
-    private GameObject LevelEndBlock;
+    private TextMeshProUGUI instructionText;
+    [SerializeField]
+    private GameObject levelEndBlock;
+    [SerializeField]
+    private ParticleSystem snowEmitter;
 
     private void Awake()
     {
         gameManager = this;
         snowball = GameObject.Find("Snowball").GetComponent<Rigidbody>();
+        cameraController = Camera.main.GetComponent<CameraController>();
+        magnet = snowball.GetComponentInChildren<Magnet>();
         currentSize = 1;
         currentExp = 0f;
+        levelEndBonus = 0f;
+        GetComponent<LevelEndScript>().BuildEndOfLevel(GetLevelEndPosition(), levelEndBlock.transform);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public static GameManager GetGameManager()
@@ -50,11 +62,15 @@ public class GameManager : MonoBehaviour
 
     public Vector3 GetLevelEndPosition()
     {
-        return LevelEndBlock.transform.position;
+        return levelEndBlock.transform.position;
     }
 
     public void StartLevelEnd()
     {
+        if (!startedLevelEnd) {
+            instructionText.text = "Tap Fast";
+            cameraController.PlaySpeedEffect(100);
+        }
         startedLevelEnd = true;
     }
 
@@ -63,27 +79,18 @@ public class GameManager : MonoBehaviour
         return startedLevelEnd;
     }
 
-    public void JumpLevelEnd()
+    public void FinishLevelEnd()
     {
-        jumpedLevelEnd = true;
+        instructionText.text = "";
+        finishedLevelEnd = true;
     }
 
-    public bool IsJumpedLevelEnd()
+    public bool IsFinishedLevelEnd()
     {
-        return jumpedLevelEnd;
+        return finishedLevelEnd;
     }
 
-    public void CollideLevelEnd()
-    {
-        collidedLevelEnd = true;
-    }
-
-    public bool IsCollidedLevelEnd()
-    {
-        return collidedLevelEnd;
-    }
-
-    public void GainExp(float expAmount)
+    public void GainExp(float expAmount, bool isLevelEnd = false)
     {
         currentExp += expAmount;
         float expRequired = GetExpForNextSize();
@@ -92,6 +99,11 @@ public class GameManager : MonoBehaviour
             currentSize++;
             currentExp -= expRequired;
             snowball.transform.localScale += Vector3.one;
+        }
+        if (isLevelEnd)
+        {
+            levelEndBonus += expAmount;
+            instructionText.text = "Bonus - " + levelEndBonus;
         }
     }
 
@@ -102,6 +114,7 @@ public class GameManager : MonoBehaviour
         {
             currentExp = 0;
         }
+        snowEmitter.Play();
     }
 
     public float GetExpForNextSize()
@@ -117,5 +130,19 @@ public class GameManager : MonoBehaviour
     public float GetCurrentExp()
     {
         return currentExp;
+    }
+
+    public void Fever()
+    {
+        instructionText.text = "FEVER";
+        magnet.Enable();
+        cameraController.PlaySpeedEffect(70);
+        snowball.AddForce(Vector3.forward * 5f);
+    }
+
+    public void FeverDone()
+    {
+        instructionText.text = "";
+        magnet.Enable(false);
     }
 }

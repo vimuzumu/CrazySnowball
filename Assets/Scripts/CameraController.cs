@@ -7,32 +7,42 @@ public class CameraController : MonoBehaviour
     private const float BASE_UP_OFFSET = 12f;
     private const float BASE_BACK_OFFSET = 20f;
     private const float MOVE_STEP = 0.1f;
+    private const float ANGLE = 15f;
 
     private Rigidbody snowball;
+    private GameManager gameManager;
     private float upOffset;
     private float backOffset;
 
     [SerializeField]
     private ParticleSystem speedEffect;
 
-    // Start is called before the first frame update
     void Start()
     {
-        snowball = GameManager.GetGameManager().GetSnowball();
-        transform.rotation = Quaternion.Euler(15f, 0f, 0f);
+        gameManager = GameManager.GetGameManager();
+        snowball = gameManager.GetSnowball();
+        transform.rotation = Quaternion.Euler(ANGLE, 0f, 0f);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.8f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
-        backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.8f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
-        transform.position = Vector3.Lerp(transform.position, snowball.position + Vector3.up * upOffset + Vector3.back * backOffset, MOVE_STEP);
+        if (gameManager.IsStartedLevelEnd())
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(ANGLE * 2.5f, 0f, 0f), MOVE_STEP / 20);
+            transform.position = Vector3.Slerp(transform.position, snowball.position + Vector3.up * upOffset * 3f + Vector3.back * backOffset * 0.25f, MOVE_STEP / 5);
+        }
+        else
+        {
+            upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.8f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
+            backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.8f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
+            transform.position = Vector3.Lerp(transform.position, snowball.position + Vector3.up * upOffset + Vector3.back * backOffset, MOVE_STEP);
+        }
     }
 
     public void PlaySpeedEffect(float emissionRate)
     {
-        speedEffect.emissionRate = emissionRate;
+        ParticleSystem.EmissionModule emission = speedEffect.emission;
+        emission.rateOverTime = emissionRate;
         speedEffect.Play();
     }
 }

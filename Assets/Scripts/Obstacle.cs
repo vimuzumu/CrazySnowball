@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
+    private const float SECONDS_TO_SANTA_HOP = 5f;
     private const float SECONDS_TO_GET_EATEN = 2f;
     private const float SECONDS_TO_GET_PULLED = 1f;
     private const float OUTLINE_SCALE_DIFF_THRESHOLD = 3f;
@@ -15,6 +16,8 @@ public class Obstacle : MonoBehaviour
     private new Collider collider;
     private GameManager gameManager;
 
+    [SerializeField]
+    private bool isSanta;
     [SerializeField]
     private bool isLevelEndBlock;
     [SerializeField]
@@ -54,13 +57,30 @@ public class Obstacle : MonoBehaviour
         return gameManager.GetCurrentSize() >= size;
     }
 
+    public void SetSize(int i)
+    {
+        size = i;
+    }
+
+    public void SetIsLevelEnd(bool b)
+    {
+        isLevelEndBlock = b;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (ShouldGetEaten())
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Snowball"))
             {
-                StartCoroutine(GetEaten(other.transform));
+                if (isSanta)
+                {
+                    StartCoroutine(SantaHop(other.transform));
+                }
+                else
+                {
+                    StartCoroutine(GetEaten(other.transform));
+                }
             }
             else if (other.gameObject.layer == LayerMask.NameToLayer("Magnet"))
             {
@@ -68,7 +88,6 @@ public class Obstacle : MonoBehaviour
             }
         }
     }
-
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -89,7 +108,7 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         transform.SetParent(snowball, true);
-        gameManager.GainExp(size * 10f);
+        gameManager.GainExp(size * 10f, isLevelEndBlock);
         float t = 0f;
         Vector3 initialScale = transform.localScale;
         Vector3 initialPosition = transform.localPosition;
@@ -103,7 +122,6 @@ public class Obstacle : MonoBehaviour
         Destroy(gameObject);
     }
 
-
     private IEnumerator GetPulled(Transform snowball)
     {
         collider.enabled = false;
@@ -116,5 +134,36 @@ public class Obstacle : MonoBehaviour
             yield return null;
         }
         StartCoroutine(GetEaten(snowball));
+    }
+
+    private IEnumerator SantaHop(Transform snowball)
+    {
+        collider.enabled = false;
+        float t = 0f;
+        Vector3 initialPosition = transform.localPosition;
+        while (t < 0.1f)
+        {
+            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 2f, t * 5);
+            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            yield return null;
+        }
+        transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 2f;
+        while (t < 0.2f)
+        {
+            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f, t * 5);
+            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            yield return null;
+        }
+        transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
+        gameManager.Fever();
+        while (t < 1f) 
+        {
+            transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
+            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            yield return null;
+        }
+        gameManager.FeverDone();
+        StartCoroutine(GetEaten(snowball));
+        //Destroy(gameObject);
     }
 }
