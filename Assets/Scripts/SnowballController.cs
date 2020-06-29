@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class SnowballController : MonoBehaviour
 {
-    private const float BASE_MOVE_SPEED = 50f;
-    private const float MAX_HORIZONTAL_VELOCITY = 20f;
     private const float MOVE_STEP = 0.2f;
-    private const float EXP_GAIN_PER_SECOND = 400f;
 
     private new Rigidbody rigidbody;
     private float horizontalVelocity;
@@ -22,8 +19,9 @@ public class SnowballController : MonoBehaviour
         horizontalVelocity = 0f;
         touchInitialPosition = Vector2.zero;
         rigidbody = GetComponent<Rigidbody>();
-        rigidbody.AddForce(Vector3.forward * BASE_MOVE_SPEED + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
+        rigidbody.AddForce(Vector3.forward * Settings.baseMoveVelocity + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
         gameManager = GameManager.GetGameManager();
+        transform.localScale = Vector3.one * Settings.startingSize;
     }
 
     void Update()
@@ -60,26 +58,33 @@ public class SnowballController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsPassedLevelEndLine())
+        if (gameManager.IsGameRunning())
         {
-            Vector3 toPosition = gameManager.GetLevelEndPosition() + 180f * Vector3.forward + 63f * Vector3.down;
-            rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, new Vector3(toPosition.x - rigidbody.transform.position.x, rigidbody.velocity.y, BASE_MOVE_SPEED * 1.25f), MOVE_STEP * 2);
-            if (!gameManager.IsFinishedLevelEnd() && transform.position.z > gameManager.GetLevelEndPosition().z + 2.5f * BASE_MOVE_SPEED)
+            if (IsPassedLevelEndLine())
             {
-                gameManager.FinishLevelEnd();
+                Vector3 toPosition = gameManager.GetLevelEndPosition() + 180f * Vector3.forward + 63f * Vector3.down;
+                rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, new Vector3(toPosition.x - rigidbody.transform.position.x, rigidbody.velocity.y, Settings.baseMoveVelocity * 1.25f), MOVE_STEP * 2);
+                if (!gameManager.IsFinishedLevelEnd() && transform.position.z > gameManager.GetLevelEndPosition().z + 2.5f * Settings.baseMoveVelocity)
+                {
+                    gameManager.FinishLevelEnd();
+                }
+            }
+            else
+            {
+                if (rigidbody.velocity.z < Settings.baseMoveVelocity)
+                {
+                    rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, Mathf.Lerp(rigidbody.velocity.z, Settings.baseMoveVelocity, MOVE_STEP * 0.1f));
+                }
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, transform.localScale.y, 1 << LayerMask.NameToLayer("Ground")))
+                {
+                    gameManager.GainExp(Time.fixedDeltaTime * Settings.expGainPerSecond);
+                }
+                rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, horizontalVelocity, MOVE_STEP), rigidbody.velocity.y, rigidbody.velocity.z);
             }
         }
-        else
+        else if (rigidbody.velocity.magnitude != 0f)
         {
-            if (rigidbody.velocity.z < BASE_MOVE_SPEED)
-            {
-                rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, Mathf.Lerp(rigidbody.velocity.z, BASE_MOVE_SPEED, MOVE_STEP * 0.1f));
-            }
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, transform.localScale.y, 1 << LayerMask.NameToLayer("Ground")))
-            {
-                gameManager.GainExp(Time.fixedDeltaTime * EXP_GAIN_PER_SECOND);
-            }
-            rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, horizontalVelocity, MOVE_STEP), rigidbody.velocity.y, rigidbody.velocity.z);
+            rigidbody.velocity = Vector3.zero;
         }
     }
 
@@ -118,8 +123,8 @@ public class SnowballController : MonoBehaviour
                 break;
 		    }
         #endif
-        float maxDistance = Screen.width * 0.25f;
+        float maxDistance = Screen.width * Settings.swipeScreenRatio;
         float distance = Mathf.Clamp(position.x - touchInitialPosition.x, -maxDistance, maxDistance);
-        return (distance / maxDistance) * MAX_HORIZONTAL_VELOCITY;
+        return (distance / maxDistance) * Settings.maxHorizontalVelocity;
     }
 }

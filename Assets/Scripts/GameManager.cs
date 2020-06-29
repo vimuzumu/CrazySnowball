@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
-    private const float EXP_PER_SIZE_MODIFIER = 200f;
+    private const string CURRENT_COINS_KEY = "CurrentCoins";
 
     public static int currentCoinsAmount;
 
@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private float levelEndBonus;
     private CameraController cameraController;
     private Magnet magnet;
+    private bool gameRunning;
 
     [SerializeField]
     private Canvas canvas;
@@ -34,19 +35,19 @@ public class GameManager : MonoBehaviour
     {
         gameManager = this;
         snowball = GameObject.Find("Snowball").GetComponent<Rigidbody>();
-        cameraController = Camera.main.GetComponent<CameraController>();
-        magnet = snowball.GetComponentInChildren<Magnet>();
-        currentSize = 1;
-        currentExp = 0f;
-        currentCoinsAmount = 0;
-        levelEndBonus = 0f;
-        GetComponent<LevelEndScript>().BuildEndOfLevel(GetLevelEndPosition(), levelEndBlock.transform);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        cameraController = Camera.main.GetComponent<CameraController>();
+        magnet = snowball.GetComponentInChildren<Magnet>();
+        currentSize = 1;
+        currentExp = 0f;
+        currentCoinsAmount = PlayerPrefs.GetInt(CURRENT_COINS_KEY);
+        levelEndBonus = 0f;
+        GetComponent<LevelEndScript>().BuildEndOfLevel(GetLevelEndPosition(), levelEndBlock.transform);
+        gameRunning = true;
     }
 
     // Update is called once per frame
@@ -124,7 +125,7 @@ public class GameManager : MonoBehaviour
 
     public float GetExpForNextSize()
     {
-        return currentSize * EXP_PER_SIZE_MODIFIER;
+        return currentSize * Settings.expPerSizeMultiplier;
     }
 
     public int GetCurrentSize()
@@ -154,5 +155,15 @@ public class GameManager : MonoBehaviour
     {
         instructionText.text = "";
         magnet.Enable(false);
+    }
+
+    public bool IsGameRunning()
+    {
+        return gameRunning;
+    }
+
+    public void SetGameRunning(bool run)
+    {
+        gameRunning = run;
     }
 }

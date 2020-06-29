@@ -10,12 +10,8 @@ public class Magnet: MonoBehaviour
     private void Start()
     {
         collider = GetComponent<SphereCollider>();
+        collider.radius = Settings.magnetRadius;
         Enable(false);
-    }
-
-    private void Update()
-    {
-
     }
 
     public void Enable(bool enable = true)
