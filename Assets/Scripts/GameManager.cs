@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private bool finishedLevelEnd;
     private int currentSize;
     private float currentExp;
+    private float tapEffect;
     private float levelEndBonus;
     private CameraController cameraController;
     private Magnet magnet;
@@ -26,6 +27,10 @@ public class GameManager : MonoBehaviour
     private Canvas canvas;
     [SerializeField]
     private TextMeshProUGUI instructionText;
+    [SerializeField]
+    private GameObject tapImage;
+    [SerializeField]
+    private GameObject levelEndGauge;
     [SerializeField]
     private GameObject levelEndBlock;
     [SerializeField]
@@ -47,13 +52,8 @@ public class GameManager : MonoBehaviour
         currentCoinsAmount = PlayerPrefs.GetInt(CURRENT_COINS_KEY);
         levelEndBonus = 0f;
         GetComponent<LevelEndScript>().BuildEndOfLevel(GetLevelEndPosition(), levelEndBlock.transform);
+        tapEffect = 50f;
         gameRunning = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public static GameManager GetGameManager()
@@ -71,11 +71,34 @@ public class GameManager : MonoBehaviour
         return levelEndBlock.transform.position;
     }
 
+    private IEnumerator LevelEndUI()
+    {
+        tapImage.SetActive(true);
+        levelEndGauge.SetActive(true);
+        RectTransform transform = tapImage.GetComponent<RectTransform>();
+        bool flip = true;
+        while (!finishedLevelEnd)
+        {
+            transform.localScale = Vector3.one * (flip ? 2.8f : 3f);
+            flip = !flip;
+            yield return new WaitForSeconds(0.06f);
+        }
+        yield return null;
+    }
+
+    private IEnumerator FinishLevelEndIn2Seconds()
+    {
+        yield return new WaitForSeconds(2f);
+        FinishLevelEnd();
+    }
+
     public void StartLevelEnd()
     {
         if (!startedLevelEnd) {
+            StartCoroutine(LevelEndUI());
             instructionText.text = "Tap Fast";
             cameraController.PlaySpeedEffect(100);
+            StartCoroutine(FinishLevelEndIn2Seconds());
         }
         startedLevelEnd = true;
     }
@@ -88,6 +111,8 @@ public class GameManager : MonoBehaviour
     public void FinishLevelEnd()
     {
         instructionText.text = "";
+        tapImage.SetActive(false);
+        levelEndGauge.SetActive(false);
         finishedLevelEnd = true;
     }
 
@@ -105,11 +130,6 @@ public class GameManager : MonoBehaviour
             currentSize++;
             currentExp -= expRequired;
             snowball.transform.localScale += Vector3.one;
-        }
-        if (isLevelEnd)
-        {
-            levelEndBonus += expAmount;
-            instructionText.text = "Bonus - " + levelEndBonus;
         }
     }
 
@@ -136,6 +156,21 @@ public class GameManager : MonoBehaviour
     public float GetCurrentExp()
     {
         return currentExp;
+    }
+
+    public float GetCurrentTapEffect()
+    {
+        return tapEffect;
+    }
+
+    public void IncTapEffect()
+    {
+        tapEffect = Mathf.Clamp(tapEffect * 1.25f, tapEffect + 10f, 100f);
+    }
+
+    public void DecTapEffect()
+    {
+        tapEffect = Mathf.Clamp(tapEffect - 1, 0f, 100f);
     }
 
     public Canvas GetCanvas()
