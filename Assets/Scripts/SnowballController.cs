@@ -32,7 +32,10 @@ public class SnowballController : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                gameManager.GainExp(gameManager.GetExpForNextSize() / 4);
+                gameManager.IncTapEffect();
+            } else
+            {
+                gameManager.DecTapEffect();
             }
         }
         if (ShouldMove())
@@ -64,10 +67,6 @@ public class SnowballController : MonoBehaviour
         {
             Vector3 toPosition = gameManager.GetLevelEndPosition() + 180f * Vector3.forward + 63f * Vector3.down;
             rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, new Vector3(toPosition.x - rigidbody.transform.position.x, rigidbody.velocity.y, BASE_MOVE_SPEED * 1.25f), MOVE_STEP * 2);
-            if (!gameManager.IsFinishedLevelEnd() && transform.position.z > gameManager.GetLevelEndPosition().z + 2.5f * BASE_MOVE_SPEED)
-            {
-                gameManager.FinishLevelEnd();
-            }
         }
         else
         {

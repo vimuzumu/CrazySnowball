@@ -15,6 +15,7 @@ public class Obstacle : MonoBehaviour
     private Rigidbody snowball;
     private new Collider collider;
     private GameManager gameManager;
+    private Animator animator;
     private bool snowman;
 
     [SerializeField]
@@ -26,6 +27,11 @@ public class Obstacle : MonoBehaviour
     [SerializeField]
     private GameObject coinEffectPrefab;
 
+    private void Awake()
+    {
+
+    }
+
     void Start()
     {
         collider = GetComponent<Collider>();
@@ -36,11 +42,25 @@ public class Obstacle : MonoBehaviour
         outline.enabled = false;
         size = size == 0 ? (int)transform.localScale.y : size;
         snowman = gameObject.layer == LayerMask.NameToLayer("Snowman");
+        animator = GetComponent<Animator>();
+        EnableAnimation(false);
     }
 
     void Update()
     {
         ColorOutline();
+        if (isSanta)
+        {
+            SetScaleAsSnowball();
+        }
+    }
+
+    private void EnableAnimation(bool enable = true)
+    {
+        if (animator)
+        {
+            animator.enabled = enable;
+        }
     }
 
     private void ColorOutline()
@@ -48,6 +68,7 @@ public class Obstacle : MonoBehaviour
         if (ShouldGetEaten())
         {
             collider.isTrigger = true;
+            EnableAnimation(true);
             if (!outline.enabled)
             {
                 outline.enabled = true;
@@ -59,6 +80,11 @@ public class Obstacle : MonoBehaviour
     private bool ShouldGetEaten()
     {
         return snowman || gameManager.GetCurrentSize() >= size;
+    }
+
+    public void SetScaleAsSnowball()
+    {
+        transform.localScale = snowball.transform.localScale * 0.5f;
     }
 
     public void SetSize(int i)
@@ -114,6 +140,7 @@ public class Obstacle : MonoBehaviour
         transform.SetParent(snowball, true);
         if (coinEffectPrefab != null)
         {
+            size = isLevelEndBlock ? size * 10 : size;
             GameManager.currentCoinsAmount += size;
             GameObject coinEffect = Instantiate(coinEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
             StartCoroutine(coinEffect.GetComponent<CoinEffect>().AnimateCoinEffect(size));
@@ -128,7 +155,10 @@ public class Obstacle : MonoBehaviour
             t += Time.deltaTime / SECONDS_TO_GET_EATEN;
             yield return null;
         }
-        gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * 10f, isLevelEndBlock);
+        if (!isLevelEndBlock)
+        {
+            gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * 10f, isLevelEndBlock);
+        }
         Destroy(gameObject);        
     }
 
@@ -150,30 +180,30 @@ public class Obstacle : MonoBehaviour
     {
         collider.enabled = false;
         float t = 0f;
-        Vector3 initialPosition = transform.localPosition;
-        while (t < 0.1f)
+        while (t < 1f)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 2f, t * 5);
-            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y, t * 5);
+            t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
             yield return null;
         }
         transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 2f;
-        while (t < 0.2f)
+        t = 0;
+        while (t < 1f)
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f, t * 5);
-            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            t += Time.deltaTime / (SECONDS_TO_SANTA_HOP * 0.1f);
             yield return null;
         }
         transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
         gameManager.Fever();
-        while (t < 1f) 
+        float timeLeft = (SECONDS_TO_SANTA_HOP * 0.8f);
+        while (timeLeft > 0f) 
         {
             transform.localPosition = snowball.position + Vector3.up * snowball.transform.localScale.y * 0.5f;
-            t += Time.deltaTime / SECONDS_TO_SANTA_HOP;
+            timeLeft -= Time.deltaTime;
             yield return null;
         }
         gameManager.FeverDone();
         StartCoroutine(GetEaten(snowball));
-        //Destroy(gameObject);
     }
 }
