@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private Canvas canvas;
+    [SerializeField]
     private TextMeshProUGUI instructionText;
     [SerializeField]
     private GameObject levelEndBlock;
