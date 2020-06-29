@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1219,6 +1219,7 @@ MonoBehaviour:
   isSanta: 0
   isLevelEndBlock: 0
   size: 0
+  coinEffectPrefab: {fileID: 0}
 --- !u!64 &661193657
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1441,6 +1442,7 @@ MonoBehaviour:
   isSanta: 1
   isLevelEndBlock: 0
   size: 0
+  coinEffectPrefab: {fileID: 0}
 --- !u!64 &681431046
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7258,6 +7260,11 @@ PrefabInstance:
       propertyPath: levelEndBlock
       value: 
       objectReference: {fileID: 2132790720}
+    - target: {fileID: 4362693015023021816, guid: 1ad6d626e9b12ca47a73e8841a8e1eff,
+        type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 148338011}
     - target: {fileID: 4362693015023021818, guid: 1ad6d626e9b12ca47a73e8841a8e1eff,
         type: 3}
       propertyPath: m_LocalPosition.x
