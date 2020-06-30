@@ -89,6 +89,11 @@ public class Settings : MonoBehaviour
 
     public void ExitForm()
     {
+        RestartLevel();
+    }
+
+    public static void RestartLevel()
+    {
         SceneManager.LoadScene(0);
     }
 

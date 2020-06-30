@@ -110,6 +110,7 @@ public class GameManager : MonoBehaviour
 
     public void FinishLevelEnd()
     {
+        startedLevelEnd = false;
         instructionText.text = "";
         tapImage.SetActive(false);
         levelEndGauge.SetActive(false);
@@ -180,7 +181,7 @@ public class GameManager : MonoBehaviour
 
     public void Fever()
     {
-        instructionText.text = "FEVER";
+        instructionText.text = "SANTA MAGNET";
         magnet.Enable();
         cameraController.PlaySpeedEffect(70);
         snowball.AddForce(Vector3.forward * 5f);
@@ -200,5 +201,18 @@ public class GameManager : MonoBehaviour
     public void SetGameRunning(bool run)
     {
         gameRunning = run;
+    }
+    
+    IEnumerator RestartLevelIn2Seconds()
+    {
+        yield return new WaitForSeconds(2f);
+        Settings.RestartLevel();
+    }
+
+    public void FinishLevel()
+    {
+        PlayerPrefs.SetInt(CURRENT_COINS_KEY, currentCoinsAmount);
+        snowball.velocity = Vector3.zero;
+        StartCoroutine(RestartLevelIn2Seconds());
     }
 }

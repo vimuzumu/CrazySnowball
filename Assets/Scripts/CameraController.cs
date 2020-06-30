@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private const float BASE_UP_OFFSET = 12f;
-    private const float BASE_BACK_OFFSET = 20f;
+    private const float BASE_UP_OFFSET = 30f;
+    private const float BASE_BACK_OFFSET = 25f;
     private const float MOVE_STEP = 0.1f;
-    private const float ANGLE = 15f;
+    private const float ANGLE = 30f;
+    private const float LEVEL_END_MOVE_STEP = 0.2f;
 
     private Rigidbody snowball;
     private GameManager gameManager;
@@ -26,20 +27,21 @@ public class CameraController : MonoBehaviour
 
     void FixedUpdate()
     {
-        upOffset = BASE_UP_OFFSET * snowball.transform.localScale.y * 0.5f/* + Mathf.Floor(snowball.transform.localScale.y)*/;
-        backOffset = BASE_BACK_OFFSET * snowball.transform.localScale.z * 0.5f/* + Mathf.Floor(snowball.transform.localScale.z)*/;
-        if (gameManager.IsFinishedLevelEnd())
+        upOffset = BASE_UP_OFFSET + gameManager.GetCurrentSize();
+        backOffset = BASE_BACK_OFFSET + gameManager.GetCurrentSize() * 1.1f;
+        if (gameManager.IsStartedLevelEnd())
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(ANGLE * 1.25f, 0f, 0f), MOVE_STEP * 0.25f);
-            transform.position = Vector3.Slerp(transform.position, snowball.position + Vector3.up * upOffset * 0.7f + Vector3.back * backOffset * 0.5f, MOVE_STEP * 0.75f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(ANGLE * 0.75f, 0f, 0f), MOVE_STEP * 0.25f);
+            transform.position = Vector3.Slerp(transform.position, snowball.position + Vector3.up * upOffset * 0.2f + Vector3.back * backOffset * 0.25f, LEVEL_END_MOVE_STEP);
         }
-        else if (gameManager.IsStartedLevelEnd())
+        else if (gameManager.IsFinishedLevelEnd())
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(ANGLE * 2f, 0f, 0f), MOVE_STEP * 0.25f);
-            transform.position = Vector3.Slerp(transform.position, snowball.position + Vector3.up * upOffset * 0.3f + Vector3.back * backOffset * 0.05f, MOVE_STEP * 0.75f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(ANGLE * 0.5f, 0f, 0f), MOVE_STEP * 0.25f);
+            transform.position = Vector3.Slerp(transform.position, snowball.position + Vector3.up * upOffset * 0.4f + Vector3.back * backOffset * 0.25f, LEVEL_END_MOVE_STEP);
         }
         else
         {
+            transform.rotation = Quaternion.Euler(ANGLE + snowball.transform.localScale.y * 0.15f, 0f, 0f);
             transform.position = Vector3.Lerp(transform.position, snowball.position + Vector3.up * upOffset + Vector3.back * backOffset, MOVE_STEP);
         }
     }

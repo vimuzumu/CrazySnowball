@@ -26,7 +26,7 @@ public class SnowballController : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.IsStartedLevelEnd() && !gameManager.IsFinishedLevelEnd())
+        if (gameManager.IsStartedLevelEnd())
         {
             if (DidClick())
             {
@@ -51,7 +51,10 @@ public class SnowballController : MonoBehaviour
     {
         if (gameManager.IsStartedLevelEnd() || rigidbody.position.z > gameManager.GetLevelEndPosition().z)
         {
-            gameManager.StartLevelEnd();
+            if (!gameManager.IsFinishedLevelEnd() && !gameManager.IsStartedLevelEnd())
+            {
+                gameManager.StartLevelEnd();
+            }
             return true;
         }
         else

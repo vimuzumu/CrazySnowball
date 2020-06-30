@@ -117,7 +117,7 @@ public class Obstacle : MonoBehaviour
         {
             if (isLevelEndBlock)
             {
-                Debug.Log("Level Finished");
+                gameManager.FinishLevel();
             }
             else
             {
