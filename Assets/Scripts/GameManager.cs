@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private float tapEffect;
     private float levelEndBonus;
     private CameraController cameraController;
+    private bool gameStarted;
     private bool gameRunning;
 
     [SerializeField]
@@ -54,6 +55,8 @@ public class GameManager : MonoBehaviour
         GetComponent<LevelEndScript>().BuildEndOfLevel(GetLevelEndPosition(), levelEndBlock.transform);
         tapEffect = 50f;
         gameRunning = true;
+        gameStarted = false;
+        instructionText.text = "Hold to move";
     }
 
     public static GameManager GetGameManager()
@@ -64,6 +67,12 @@ public class GameManager : MonoBehaviour
     public Rigidbody GetSnowball()
     {
         return snowball;
+    }
+
+    public void StartGame()
+    {
+        gameStarted = true;
+        instructionText.text = "";
     }
 
     public Vector3 GetLevelEndPosition()
@@ -195,7 +204,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameRunning()
     {
-        return gameRunning;
+        return gameRunning && gameStarted;
     }
 
     public void SetGameRunning(bool run)
@@ -214,5 +223,10 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt(CURRENT_COINS_KEY, currentCoinsAmount);
         snowball.velocity = Vector3.zero;
         StartCoroutine(RestartLevelIn2Seconds());
+    }
+
+    public bool DidGameStart()
+    {
+        return gameStarted;
     }
 }

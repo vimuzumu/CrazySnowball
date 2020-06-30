@@ -7,25 +7,36 @@ using UnityEngine.SceneManagement;
 
 public class Settings : MonoBehaviour
 {
-    private const float BASE_MOVE_VELOCITY = 50f;
-    private const float MAX_HORIZONTAL_VELOCITY = 20f;
-    private const float SWIPE_SCREEN_RATIO = 0.25f;
-    private const int STARTING_SIZE = 1;
-    private const float EXP_GAIN_PER_SECOND = 400f;
-    private const float EXP_LOSS_PER_HIT = 20f;
-    private const float EXP_PER_SIZE_MULTIPLIER = 200f;
-    private const float EATING_EXP_MULTIPLIER = 10f;
-    private const float MAGNET_RADIUS = 5f;
+    private const float DEFAULT_BASE_MOVE_VELOCITY = 50f;
+    private const float DEFAULT_MAX_HORIZONTAL_VELOCITY = 20f;
+    private const float DEFAULT_SWIPE_SCREEN_RATIO = 0.25f;
+    private const int DEFAULT_STARTING_SIZE = 1;
+    private const float DEFAULT_EXP_GAIN_PER_SECOND = 400f;
+    private const float DEFAULT_EXP_LOSS_PER_HIT = 20f;
+    private const float DEFAULT_EXP_PER_SIZE_MULTIPLIER = 200f;
+    private const float DEFAULT_EATING_EXP_MULTIPLIER = 10f;
+    private const float DEFAULT_MAGNET_RADIUS = 5f;
+    private const float DEFAULT_MAGNET_DURATION = 5f;
+    private const int DEFAULT_LEVEL_END_TAP_EXP_INDEX = 1;
 
-    public static float baseMoveVelocity = BASE_MOVE_VELOCITY;
-    public static float maxHorizontalVelocity = MAX_HORIZONTAL_VELOCITY;
-    public static float swipeScreenRatio = SWIPE_SCREEN_RATIO;
-    public static int startingSize = STARTING_SIZE;
-    public static float expGainPerSecond = EXP_GAIN_PER_SECOND;
-    public static float expLossPerHit = EXP_LOSS_PER_HIT;
-    public static float expPerSizeMultiplier = EXP_PER_SIZE_MULTIPLIER;
-    public static float eatingExpMultiplier = EATING_EXP_MULTIPLIER;
-    public static float magnetRadius = MAGNET_RADIUS;
+    private static float[][] levelEndTapExpOptions = new float[][]
+    {
+        new float[] { 0.75f, 0.05f },   // High
+        new float[] { 0.5f, 0.01f },    // Medium
+        new float[] { 0.25f, 0.005f }   // Low
+    };
+
+    public static float baseMoveVelocity = DEFAULT_BASE_MOVE_VELOCITY;
+    public static float maxHorizontalVelocity = DEFAULT_MAX_HORIZONTAL_VELOCITY;
+    public static float swipeScreenRatio = DEFAULT_SWIPE_SCREEN_RATIO;
+    public static int startingSize = DEFAULT_STARTING_SIZE;
+    public static float expGainPerSecond = DEFAULT_EXP_GAIN_PER_SECOND;
+    public static float expLossPerHit = DEFAULT_EXP_LOSS_PER_HIT;
+    public static float expPerSizeMultiplier = DEFAULT_EXP_PER_SIZE_MULTIPLIER;
+    public static float eatingExpMultiplier = DEFAULT_EATING_EXP_MULTIPLIER;
+    public static float magnetRadius = DEFAULT_MAGNET_RADIUS;
+    public static float magnetDuration = DEFAULT_MAGNET_DURATION;
+    private static int LevelEndTapExpIndex = DEFAULT_LEVEL_END_TAP_EXP_INDEX;
 
     [SerializeField]
     private TMP_InputField baseSpeedInput;
@@ -47,6 +58,10 @@ public class Settings : MonoBehaviour
     private TMP_InputField eatingExpMultiplierInput;
     [SerializeField]
     private TMP_InputField magnetRadiusInput;
+    [SerializeField]
+    private TMP_InputField magnetDurationInput;
+    [SerializeField]
+    private TMP_Dropdown levelEndExperiencePerTapDropdown;
 
     void Start()
     {
@@ -65,19 +80,23 @@ public class Settings : MonoBehaviour
         nextSizeExpMultiplierInput.text = expPerSizeMultiplier.ToString();
         eatingExpMultiplierInput.text = eatingExpMultiplier.ToString();
         magnetRadiusInput.text = magnetRadius.ToString();
+        magnetDurationInput.text = magnetRadius.ToString();
+        levelEndExperiencePerTapDropdown.SetValueWithoutNotify(LevelEndTapExpIndex);
     }    
 
     public void SetDefaults()
     {
-        baseMoveVelocity = BASE_MOVE_VELOCITY;
-        maxHorizontalVelocity = MAX_HORIZONTAL_VELOCITY;
-        swipeScreenRatio = SWIPE_SCREEN_RATIO;
-        startingSize = STARTING_SIZE;
-        expGainPerSecond = EXP_GAIN_PER_SECOND;
-        expLossPerHit = EXP_LOSS_PER_HIT;
-        expPerSizeMultiplier = EXP_PER_SIZE_MULTIPLIER;
-        eatingExpMultiplier = EATING_EXP_MULTIPLIER;
-        magnetRadius = MAGNET_RADIUS;
+        baseMoveVelocity = DEFAULT_BASE_MOVE_VELOCITY;
+        maxHorizontalVelocity = DEFAULT_MAX_HORIZONTAL_VELOCITY;
+        swipeScreenRatio = DEFAULT_SWIPE_SCREEN_RATIO;
+        startingSize = DEFAULT_STARTING_SIZE;
+        expGainPerSecond = DEFAULT_EXP_GAIN_PER_SECOND;
+        expLossPerHit = DEFAULT_EXP_LOSS_PER_HIT;
+        expPerSizeMultiplier = DEFAULT_EXP_PER_SIZE_MULTIPLIER;
+        eatingExpMultiplier = DEFAULT_EATING_EXP_MULTIPLIER;
+        magnetRadius = DEFAULT_MAGNET_RADIUS;
+        magnetDuration = DEFAULT_MAGNET_DURATION;
+        LevelEndTapExpIndex = DEFAULT_LEVEL_END_TAP_EXP_INDEX;
         PopulateForm();
     }
 
@@ -142,5 +161,20 @@ public class Settings : MonoBehaviour
     public void SetMagnetRadius()
     {
         magnetRadius = float.Parse(magnetRadiusInput.text);
+    }
+
+    public void SetMagnetDuration()
+    {
+        magnetDuration = float.Parse(magnetDurationInput.text);
+    }
+
+    public void SetLevelEndTapExp()
+    {
+        LevelEndTapExpIndex = levelEndExperiencePerTapDropdown.value;
+    }
+
+    public static float[] GetLevelEndTapExp()
+    {
+        return levelEndTapExpOptions[LevelEndTapExpIndex];
     }
 }

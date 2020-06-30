@@ -12,6 +12,7 @@ public class SnowballController : MonoBehaviour
     private RaycastHit hit;
     private int eatingAmount;
     private GameManager gameManager;
+    private float[] levelEndTapExp;
 
     void Start()
     {
@@ -22,6 +23,7 @@ public class SnowballController : MonoBehaviour
         rigidbody.AddForce(Vector3.forward * Settings.baseMoveVelocity + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
         gameManager = GameManager.GetGameManager();
         transform.localScale = Vector3.one * Settings.startingSize;
+        levelEndTapExp = Settings.GetLevelEndTapExp();
     }
 
     void Update()
@@ -31,7 +33,7 @@ public class SnowballController : MonoBehaviour
             if (DidClick())
             {
                 gameManager.IncTapEffect();
-                gameManager.GainExp(gameManager.GetExpForNextSize() * 0.5f * gameManager.GetCurrentTapEffect() * 0.01f);
+                gameManager.GainExp(gameManager.GetExpForNextSize() * levelEndTapExp[0] * gameManager.GetCurrentTapEffect() * levelEndTapExp[1]);
             } else
             {
                 gameManager.DecTapEffect();
@@ -39,6 +41,10 @@ public class SnowballController : MonoBehaviour
         }
         if (ShouldMove())
         {
+            if (!gameManager.DidGameStart())
+            {
+                gameManager.StartGame();
+            }
             horizontalVelocity = GetHorizontalVelocity();
         }
         else
