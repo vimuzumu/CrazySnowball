@@ -22,7 +22,8 @@ public class GameManager : MonoBehaviour
     private CameraController cameraController;
     private bool gameStarted;
     private bool gameRunning;
-
+    private float gameStartTime;
+    
     [SerializeField]
     private Canvas canvas;
     [SerializeField]
@@ -42,13 +43,13 @@ public class GameManager : MonoBehaviour
     {
         gameManager = this;
         snowball = GameObject.Find("Snowball").GetComponent<Rigidbody>();
+        currentSize = Settings.startingSize;
     }
 
     // Start is called before the first frame update
     void Start()
     {
         cameraController = Camera.main.GetComponent<CameraController>();
-        currentSize = 1;
         currentExp = 0f;
         currentCoinsAmount = PlayerPrefs.GetInt(CURRENT_COINS_KEY);
         levelEndBonus = 0f;
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
     {
         gameStarted = true;
         instructionText.text = "";
+        gameStartTime = Time.time;
     }
 
     public Vector3 GetLevelEndPosition()
@@ -138,6 +140,7 @@ public class GameManager : MonoBehaviour
         if (currentExp > expRequired)
         {
             currentSize++;
+            Debug.Log(currentSize);
             currentExp -= expRequired;
             snowball.transform.localScale += Vector3.one;
         }
@@ -150,6 +153,8 @@ public class GameManager : MonoBehaviour
         {
             currentExp = 0;
         }
+        ParticleSystem.MainModule main = snowEmitter.main;
+        main.startSize = new ParticleSystem.MinMaxCurve(currentSize * 0.1f, currentSize * 0.15f);
         snowEmitter.Play();
     }
 
@@ -220,6 +225,7 @@ public class GameManager : MonoBehaviour
 
     public void FinishLevel()
     {
+        SetGameRunning(false);
         PlayerPrefs.SetInt(CURRENT_COINS_KEY, currentCoinsAmount);
         snowball.velocity = Vector3.zero;
         StartCoroutine(RestartLevelIn2Seconds());
@@ -228,5 +234,10 @@ public class GameManager : MonoBehaviour
     public bool DidGameStart()
     {
         return gameStarted;
+    }
+
+    public float GetGameStartTime()
+    {
+        return gameStartTime;
     }
 }

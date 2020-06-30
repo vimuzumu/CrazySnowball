@@ -4854,8 +4854,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad063ef2fbd3d6f4c817ea8b7d57fb81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LevelEndBlock: {fileID: 0}
   canvas: {fileID: 0}
+  instructionText: {fileID: 0}
+  tapImage: {fileID: 0}
+  levelEndGauge: {fileID: 0}
+  levelEndBlock: {fileID: 0}
+  snowEmitter: {fileID: 0}
+  magnet: {fileID: 0}
 --- !u!114 &4362693015023021817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4881,6 +4886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4762802147269be4ca53d85e5b51f15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  generalUnit: {fileID: 0}
 --- !u!1001 &3484615566073954501
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4898,7 +4904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4063417980050988, guid: 4ca04dc9501451e498e3f029e625ccaf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 4063417980050988, guid: 4ca04dc9501451e498e3f029e625ccaf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4939,12 +4945,12 @@ PrefabInstance:
     - target: {fileID: 198930946724180930, guid: 4ca04dc9501451e498e3f029e625ccaf,
         type: 3}
       propertyPath: InitialModule.startSize.minScalar
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198930946724180930, guid: 4ca04dc9501451e498e3f029e625ccaf,
         type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ca04dc9501451e498e3f029e625ccaf, type: 3}

@@ -409,8 +409,8 @@ GameObject:
   - component: {fileID: 7256203879756763604}
   - component: {fileID: 7256203879756763602}
   - component: {fileID: 4474810717030619142}
-  - component: {fileID: 8626939093212409279}
   - component: {fileID: -1981266083364218716}
+  - component: {fileID: 3394356191313157780}
   m_Layer: 10
   m_Name: WinterChest
   m_TagString: Untagged
@@ -487,20 +487,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!64 &8626939093212409279
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7256203879756763605}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &-1981266083364218716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,8 +502,22 @@ MonoBehaviour:
   isSanta: 0
   isLevelEndBlock: 1
   size: 0
+  expMultiplier: 0
   collectibleEffectPrefab: {fileID: 5065685376114528899, guid: b51c759d86dddaf458c4e0e2b4fd97d2,
     type: 3}
+--- !u!65 &3394356191313157780
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7256203879756763605}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2581972, y: 0.97525483, z: 1}
+  m_Center: {x: -0.0121550085, y: 0.22099228, z: 0}
 --- !u!1 &7256203880233034595
 GameObject:
   m_ObjectHideFlags: 0

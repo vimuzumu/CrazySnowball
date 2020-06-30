@@ -11,7 +11,7 @@ public class Settings : MonoBehaviour
     private const float DEFAULT_MAX_HORIZONTAL_VELOCITY = 20f;
     private const float DEFAULT_SWIPE_SCREEN_RATIO = 0.25f;
     private const int DEFAULT_STARTING_SIZE = 1;
-    private const float DEFAULT_EXP_GAIN_PER_SECOND = 400f;
+    private const float DEFAULT_EXP_GAIN_PER_SECOND = 50f;
     private const float DEFAULT_EXP_LOSS_PER_HIT = 20f;
     private const float DEFAULT_EXP_PER_SIZE_MULTIPLIER = 200f;
     private const float DEFAULT_EATING_EXP_MULTIPLIER = 10f;

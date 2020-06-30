@@ -20,9 +20,9 @@ public class SnowballController : MonoBehaviour
         horizontalVelocity = 0f;
         touchInitialPosition = Vector2.zero;
         rigidbody = GetComponent<Rigidbody>();
-        rigidbody.AddForce(Vector3.forward * Settings.baseMoveVelocity + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
+        //rigidbody.AddForce(Vector3.forward * Settings.baseMoveVelocity + Physics.gravity * rigidbody.mass, ForceMode.Impulse);
         gameManager = GameManager.GetGameManager();
-        transform.localScale = Vector3.one * Settings.startingSize;
+        transform.localScale = Vector3.one * gameManager.GetCurrentSize();
         levelEndTapExp = Settings.GetLevelEndTapExp();
     }
 
@@ -87,6 +87,10 @@ public class SnowballController : MonoBehaviour
                 if (Physics.Raycast(transform.position, Vector3.down, out hit, transform.localScale.y, 1 << LayerMask.NameToLayer("Ground")))
                 {
                     gameManager.GainExp(Time.fixedDeltaTime * Settings.expGainPerSecond);
+                } 
+                else
+                {
+                    rigidbody.velocity = new Vector3(rigidbody.velocity.x, -Physics.gravity.magnitude, rigidbody.velocity.z);
                 }
                 rigidbody.velocity = new Vector3(Mathf.Lerp(rigidbody.velocity.x, horizontalVelocity, MOVE_STEP), rigidbody.velocity.y, rigidbody.velocity.z);
             }

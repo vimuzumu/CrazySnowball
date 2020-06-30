@@ -14,6 +14,9 @@ public class Obstacle : MonoBehaviour
     private GameManager gameManager;
     private Animator animator;
     private bool snowman;
+    private int exp;
+    private static int aggregatedAmount = 0;
+    private static float aggregationTimer = 0;
 
     [SerializeField]
     private bool isSanta;
@@ -21,6 +24,8 @@ public class Obstacle : MonoBehaviour
     private bool isLevelEndBlock;
     [SerializeField]
     private int size;
+    [SerializeField]
+    private int expMultiplier;
     [SerializeField]
     private GameObject collectibleEffectPrefab;
 
@@ -32,7 +37,8 @@ public class Obstacle : MonoBehaviour
         snowball = gameManager.GetSnowball();
         outline = GetComponent<Outline>();
         outline.enabled = false;
-        size = size == 0 ? (int)transform.localScale.y : size;
+        size = size == 0 ? (int)transform.localScale.y: size;
+        exp = expMultiplier == 0 ? size : expMultiplier * size;
         snowman = gameObject.layer == LayerMask.NameToLayer("Snowman");
         animator = GetComponent<Animator>();
         EnableAnimation(false);
@@ -120,6 +126,8 @@ public class Obstacle : MonoBehaviour
             }
             else
             {
+                Vector3 diff = snowball.position - collision.GetContact(0).point;
+                snowball.velocity = diff.normalized * 50f + Vector3.down * 50f;
                 gameManager.LoseExp(Settings.expLossPerHit);
             }
         }
@@ -127,14 +135,23 @@ public class Obstacle : MonoBehaviour
 
     public IEnumerator GetEaten(Transform snowball)
     {
+        if (aggregationTimer == 0)
+        {
+            aggregationTimer = Time.time;
+        }
         collider.enabled = false;
         transform.SetParent(snowball, true);
         if (collectibleEffectPrefab != null)
         {
-            size = isLevelEndBlock ? size * 10 : size;
-            GameManager.currentCoinsAmount += size;
-            GameObject collectibleEffect = Instantiate(collectibleEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
-            StartCoroutine(collectibleEffect.GetComponent<CollectibleEffect>().AnimateCollectibleEffect(size));
+            exp = isLevelEndBlock ? exp * 5 : exp;
+            aggregatedAmount += exp;
+            if (aggregationTimer + 0.1f <= Time.time)
+            {
+                GameObject collectibleEffect = Instantiate(collectibleEffectPrefab, Camera.main.WorldToScreenPoint(snowball.position + Vector3.up * snowball.transform.localScale.y * 0.75f), Quaternion.identity, gameManager.GetCanvas().transform);
+                StartCoroutine(collectibleEffect.GetComponent<CollectibleEffect>().AnimateCollectibleEffect(aggregatedAmount));
+                aggregationTimer = 0;
+                aggregatedAmount = 0;
+            }
         }
         float t = 0f;
         Vector3 initialScale = transform.localScale;
@@ -148,7 +165,7 @@ public class Obstacle : MonoBehaviour
         }
         if (!isLevelEndBlock)
         {
-            gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : size * Settings.eatingExpMultiplier, isLevelEndBlock);
+            gameManager.GainExp(snowman ? gameManager.GetExpForNextSize() * 0.5f : exp * Settings.eatingExpMultiplier, isLevelEndBlock);
         }
         Destroy(gameObject);        
     }

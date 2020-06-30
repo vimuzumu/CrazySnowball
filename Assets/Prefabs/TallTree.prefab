@@ -110,7 +110,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSanta: 0
   isLevelEndBlock: 0
-  size: 0
+  size: 9
+  expMultiplier: 5
   collectibleEffectPrefab: {fileID: 5065685376114528899, guid: 74d3d8c06af79bb409a57ec48f2143c9,
     type: 3}
 --- !u!114 &7447261271912800234
@@ -127,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 1
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 3
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

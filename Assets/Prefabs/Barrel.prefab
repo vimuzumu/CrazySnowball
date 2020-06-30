@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6250176089404346985}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.9288087, y: 124.24549, z: 33.026894}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -115,6 +115,7 @@ MonoBehaviour:
   isSanta: 0
   isLevelEndBlock: 0
   size: 2
+  expMultiplier: 0
   collectibleEffectPrefab: {fileID: 5065685376114528899, guid: 74d3d8c06af79bb409a57ec48f2143c9,
     type: 3}
 --- !u!136 &7605926943945677879
