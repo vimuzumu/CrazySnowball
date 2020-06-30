@@ -140,7 +140,6 @@ public class GameManager : MonoBehaviour
         if (currentExp > expRequired)
         {
             currentSize++;
-            Debug.Log(currentSize);
             currentExp -= expRequired;
             snowball.transform.localScale += Vector3.one;
         }

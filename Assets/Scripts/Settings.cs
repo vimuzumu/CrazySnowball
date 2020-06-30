@@ -21,9 +21,9 @@ public class Settings : MonoBehaviour
 
     private static float[][] levelEndTapExpOptions = new float[][]
     {
-        new float[] { 0.75f, 0.05f },   // High
-        new float[] { 0.5f, 0.01f },    // Medium
-        new float[] { 0.25f, 0.005f }   // Low
+        new float[] { 0.5f, 0.05f },   // High
+        new float[] { 0.25f, 0.01f },    // Medium
+        new float[] { 0.125f, 0.005f }   // Low
     };
 
     public static float baseMoveVelocity = DEFAULT_BASE_MOVE_VELOCITY;

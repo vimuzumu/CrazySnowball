@@ -18,7 +18,7 @@ public class LevelEndScript : MonoBehaviour
         obstacleComponent.SetSize(6);
         unit.position = new Vector3(0f, unit.position.y + GetYLength(unit) * 0.5f, length);
         length += 50f;
-        for (int i = 8; i <= 22; i+=2)
+        for (int i = 8; i <= 20; i+=2)
         {
             unit = Instantiate(generalUnit, OFFET, Quaternion.Euler(0f, 180f, 0), parent);
             unit.localScale = Vector3.one * i * 0.75f;
